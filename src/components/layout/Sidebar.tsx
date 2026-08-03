@@ -132,13 +132,6 @@ export const Sidebar: React.FC<{
           </button>
         </div>
       </nav>
-
-      <div className="p-4 space-y-1.5 border-t border-slate-100">
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 text-slate-500 transition-all text-[13px] font-medium">
-          <HelpCircle className="w-[18px] h-[18px]" />
-          <span>Support</span>
-        </button>
-      </div>
     </aside>
   );
 };

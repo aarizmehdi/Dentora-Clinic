@@ -34,6 +34,21 @@ const AppContent: React.FC = () => {
     }
   }, [clinic, currentUser]);
 
+  useEffect(() => {
+    if (clinic?.logoUrl) {
+      let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = clinic.logoUrl;
+    }
+    if (clinic?.name) {
+      document.title = `${clinic.name} - Dentora`;
+    }
+  }, [clinic?.logoUrl, clinic?.name]);
+
   const handleOpenAppointmentModal = (prefill?: {time?: string, operatoryId?: string, providerId?: string}) => {
     setAppointmentPrefill(prefill || {});
     setNewAppointmentOpen(true);
