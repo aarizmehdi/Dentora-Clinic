@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDentora } from '../../context/DentoraContext';
-import { Building2, User, Mail, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Building2, User, Mail, Lock, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
 export const AuthView: React.FC = () => {
   const { login, registerClinic } = useDentora();
@@ -34,154 +34,85 @@ export const AuthView: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#F1F5F9] flex items-center justify-center p-4 sm:p-8 overflow-hidden selection:bg-teal-500 selection:text-white">
+    <div className="relative h-screen w-full bg-[#0B1120] flex items-center justify-center p-4 sm:p-8 overflow-hidden selection:bg-teal-500 selection:text-white">
       
-      {/* Animated Background Gradients */}
-      <motion.div 
-        animate={{ scale: [1, 1.1, 1], rotate: [0, 90, 0] }} 
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[-15%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-teal-300/30 mix-blend-multiply filter blur-[120px]"
-      />
-      <motion.div 
-        animate={{ scale: [1, 1.2, 1], rotate: [0, -90, 0] }} 
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-[-15%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-blue-300/30 mix-blend-multiply filter blur-[120px]"
-      />
-      <motion.div 
-        animate={{ y: [0, -20, 0] }} 
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[20%] right-[20%] w-[30vw] h-[30vw] rounded-full bg-indigo-300/20 mix-blend-multiply filter blur-[100px]"
-      />
+      {/* Dark Premium Background with subtle glows */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-teal-500/10 blur-[120px]" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-indigo-500/10 blur-[120px]" />
+        {/* Noise overlay for texture */}
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+      </div>
 
-      {/* Main Glassmorphic Container */}
+      {/* Main Contained Card */}
       <motion.div 
-        initial={{ opacity: 0, y: 30, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full max-w-[1000px] max-h-[90vh] bg-white/70 backdrop-blur-3xl border border-white/80 rounded-[2.5rem] shadow-2xl shadow-slate-300/50 flex flex-col md:flex-row overflow-hidden"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 w-full max-w-[1100px] h-[85vh] min-h-[600px] max-h-[800px] bg-white rounded-[2rem] shadow-2xl shadow-black/50 flex flex-col md:flex-row overflow-hidden"
       >
         
-        {/* Left Side: Premium Dental Animation & Brand */}
-        <div className="hidden md:flex md:w-[45%] bg-gradient-to-br from-[#2E8081] to-teal-700 p-10 flex-col justify-between relative overflow-hidden">
-          {/* Decorative inner circles */}
-          <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-black/20 rounded-full blur-3xl pointer-events-none"></div>
+        {/* Left Side: Premium Photography & Brand */}
+        <div className="hidden md:flex md:w-1/2 relative flex-col justify-between p-12 overflow-hidden">
+          {/* High-End Dental Clinic Image Background */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center transform hover:scale-105 transition-transform duration-[20s] ease-linear"
+            style={{ 
+              backgroundImage: `url('https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=1974&auto=format&fit=crop')`
+            }}
+          />
+          {/* Rich Dark Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120] via-[#0B1120]/80 to-[#0B1120]/30" />
+          <div className="absolute inset-0 bg-teal-900/20 mix-blend-multiply" />
 
-          <div className="relative z-10">
-            <motion.h2 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-white text-3xl font-black tracking-tight flex items-center gap-2"
-            >
-              Dentora
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-teal-100/90 font-medium mt-2"
-            >
-              The intelligent clinic management system.
-            </motion.p>
+          {/* Top Brand Logo */}
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
+              <Sparkles className="w-5 h-5 text-teal-400" />
+            </div>
+            <h2 className="text-white text-2xl font-black tracking-tight">Dentora</h2>
           </div>
           
-          {/* Animated SVG Tooth Component */}
-          <div className="relative z-10 flex items-center justify-center flex-1 py-8">
-            <motion.div
-              animate={{ y: [-12, 12, -12] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="relative"
-            >
-              {/* Outer glow ring */}
-              <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl scale-150 animate-pulse"></div>
-              
-              <svg viewBox="0 0 100 100" className="w-56 h-56 drop-shadow-2xl relative z-10">
-                <defs>
-                  <linearGradient id="toothGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#ffffff" />
-                    <stop offset="100%" stopColor="#ccfbf1" />
-                  </linearGradient>
-                  <filter id="glow">
-                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                    <feMerge>
-                      <feMergeNode in="coloredBlur"/>
-                      <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
-                  </filter>
-                </defs>
-                
-                {/* Main Tooth Body */}
-                <motion.path
-                  d="M 25 35 C 25 15, 40 10, 50 20 C 60 10, 75 15, 75 35 C 75 55, 80 65, 70 80 C 60 95, 50 85, 50 70 C 50 85, 40 95, 30 80 C 20 65, 25 55, 25 35 Z"
-                  fill="url(#toothGrad)"
-                  stroke="rgba(255,255,255,1)"
-                  strokeWidth="2.5"
-                  filter="url(#glow)"
-                  initial={{ pathLength: 0, opacity: 0, scale: 0.8 }}
-                  animate={{ pathLength: 1, opacity: 1, scale: 1 }}
-                  transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-                />
-                
-                {/* Shine lines */}
-                <motion.path
-                  d="M 35 28 Q 50 18 65 28"
-                  stroke="rgba(46, 128, 129, 0.15)"
-                  strokeWidth="3"
-                  fill="none"
-                  strokeLinecap="round"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.2, duration: 1 }}
-                />
-                <motion.path
-                  d="M 30 45 Q 35 60 38 75"
-                  stroke="rgba(46, 128, 129, 0.15)"
-                  strokeWidth="2.5"
-                  fill="none"
-                  strokeLinecap="round"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.4, duration: 1 }}
-                />
-              </svg>
-            </motion.div>
-          </div>
-
+          {/* Bottom Content */}
           <div className="relative z-10">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 shadow-xl"
-            >
+            <h1 className="text-4xl font-black text-white leading-[1.1] mb-4 tracking-tight">
+              Elevate your <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">
+                dental practice.
+              </span>
+            </h1>
+            <p className="text-slate-300 font-medium text-lg max-w-sm mb-8 leading-relaxed">
+              Experience the future of clinic management with intelligent charting and seamless automated workflows.
+            </p>
+
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10 shadow-2xl">
               <div className="flex items-center gap-3 mb-2">
-                <ShieldCheck className="w-5 h-5 text-teal-300" />
+                <ShieldCheck className="w-5 h-5 text-teal-400" />
                 <span className="text-white font-bold text-sm">Enterprise Security</span>
               </div>
-              <p className="text-teal-50 font-medium text-[13px] leading-relaxed">
-                Your practice data is fully encrypted and securely backed up in real-time.
+              <p className="text-slate-300 font-medium text-[13px] leading-relaxed">
+                Your patient data is fully encrypted, HIPAA-compliant ready, and securely backed up in real-time.
               </p>
-            </motion.div>
+            </div>
           </div>
         </div>
 
-        {/* Right Side: Form (Scrollable to prevent overflow) */}
-        <div className="w-full md:w-[55%] p-8 sm:p-12 overflow-y-auto">
-          <div className="max-w-[380px] mx-auto w-full h-full flex flex-col justify-center min-h-full">
+        {/* Right Side: Clean Form */}
+        <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center overflow-y-auto bg-white">
+          <div className="max-w-[400px] mx-auto w-full">
             
             {/* Header */}
-            <div className="mb-8 text-center md:text-left">
-              <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">
-                {isLogin ? 'Welcome Back' : 'Get Started'}
+            <div className="mb-10 text-center md:text-left">
+              <h3 className="text-[2rem] font-black text-slate-900 mb-2 tracking-tight leading-tight">
+                {isLogin ? 'Welcome back' : 'Create workspace'}
               </h3>
               <p className="text-[15px] font-medium text-slate-500">
-                {isLogin ? 'Sign in to access your practice data.' : 'Register your clinic in seconds.'}
+                {isLogin ? 'Enter your credentials to securely access your practice.' : 'Set up your clinic and get started in seconds.'}
               </p>
             </div>
             
             {/* Form */}
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            <form className="space-y-4.5" onSubmit={handleSubmit}>
               <AnimatePresence mode="popLayout">
                 {!isLogin && (
                   <motion.div 
@@ -189,20 +120,20 @@ export const AuthView: React.FC = () => {
                     animate={{ opacity: 1, height: 'auto' }} 
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="space-y-4 overflow-hidden"
+                    className="space-y-4.5 overflow-hidden"
                   >
                     <div>
                       <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-widest mb-1.5 ml-1">Clinic Name</label>
                       <div className="relative group">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                          <Building2 className="h-[18px] w-[18px] text-slate-400 group-focus-within:text-teal-500 transition-colors" />
+                          <Building2 className="h-[18px] w-[18px] text-slate-400 group-focus-within:text-teal-600 transition-colors" />
                         </div>
                         <input
                           type="text"
                           required
                           value={clinicName}
                           onChange={(e) => setClinicName(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white text-[15px] font-medium transition-all placeholder:font-normal placeholder:text-slate-400"
+                          className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white text-[15px] font-medium transition-all placeholder:font-normal placeholder:text-slate-400"
                           placeholder="Acme Dental"
                         />
                       </div>
@@ -211,14 +142,14 @@ export const AuthView: React.FC = () => {
                       <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-widest mb-1.5 ml-1">Admin Name</label>
                       <div className="relative group">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                          <User className="h-[18px] w-[18px] text-slate-400 group-focus-within:text-teal-500 transition-colors" />
+                          <User className="h-[18px] w-[18px] text-slate-400 group-focus-within:text-teal-600 transition-colors" />
                         </div>
                         <input
                           type="text"
                           required
                           value={adminName}
                           onChange={(e) => setAdminName(e.target.value)}
-                          className="w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white text-[15px] font-medium transition-all placeholder:font-normal placeholder:text-slate-400"
+                          className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white text-[15px] font-medium transition-all placeholder:font-normal placeholder:text-slate-400"
                           placeholder="Dr. Jane Smith"
                         />
                       </div>
@@ -227,35 +158,35 @@ export const AuthView: React.FC = () => {
                 )}
               </AnimatePresence>
 
-              <div>
+              <div className={!isLogin ? "mt-4.5" : ""}>
                 <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-widest mb-1.5 ml-1">Email Address</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className="h-[18px] w-[18px] text-slate-400 group-focus-within:text-teal-500 transition-colors" />
+                    <Mail className="h-[18px] w-[18px] text-slate-400 group-focus-within:text-teal-600 transition-colors" />
                   </div>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white text-[15px] font-medium transition-all placeholder:font-normal placeholder:text-slate-400"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white text-[15px] font-medium transition-all placeholder:font-normal placeholder:text-slate-400"
                     placeholder="doctor@clinic.com"
                   />
                 </div>
               </div>
 
-              <div>
+              <div className="mt-4.5">
                 <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-widest mb-1.5 ml-1">Password</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="h-[18px] w-[18px] text-slate-400 group-focus-within:text-teal-500 transition-colors" />
+                    <Lock className="h-[18px] w-[18px] text-slate-400 group-focus-within:text-teal-600 transition-colors" />
                   </div>
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 bg-white/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white text-[15px] font-medium transition-all placeholder:font-normal placeholder:text-slate-400"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white text-[15px] font-medium transition-all placeholder:font-normal placeholder:text-slate-400"
                     placeholder="••••••••"
                   />
                 </div>
@@ -267,7 +198,7 @@ export const AuthView: React.FC = () => {
                     initial={{ opacity: 0, y: -10 }} 
                     animate={{ opacity: 1, y: 0 }} 
                     exit={{ opacity: 0, y: -10 }}
-                    className="p-4 bg-rose-50/80 backdrop-blur border border-rose-100 text-rose-600 text-[13px] font-bold rounded-2xl flex items-start gap-2.5"
+                    className="mt-4 p-4 bg-rose-50 border border-rose-100 text-rose-600 text-[13px] font-bold rounded-xl flex items-start gap-2.5"
                   >
                     <div className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0" />
                     <span>{error}</span>
@@ -275,11 +206,11 @@ export const AuthView: React.FC = () => {
                 )}
               </AnimatePresence>
 
-              <div className="pt-4">
+              <div className="pt-6">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl shadow-lg shadow-teal-500/25 text-[15px] font-bold text-white bg-[#2E8081] hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-2 py-4 px-4 rounded-xl shadow-lg shadow-teal-500/25 text-[15px] font-bold text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-70 disabled:cursor-not-allowed transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
@@ -299,7 +230,7 @@ export const AuthView: React.FC = () => {
               </div>
             </form>
 
-            <div className="mt-10 pt-6 border-t border-slate-200/60 text-center">
+            <div className="mt-8 pt-6 border-t border-slate-100 text-center">
               <p className="text-[13px] font-semibold text-slate-500 mb-4">
                 {isLogin ? 'New to Dentora?' : 'Already have a clinic?'}
               </p>
@@ -308,7 +239,7 @@ export const AuthView: React.FC = () => {
                   setIsLogin(!isLogin);
                   setError('');
                 }}
-                className="w-full flex justify-center py-3.5 px-4 border-2 border-slate-200/80 rounded-2xl text-[14px] font-bold text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 focus:outline-none transition-all"
+                className="w-full flex justify-center py-3.5 px-4 rounded-xl text-[14px] font-bold text-slate-700 bg-slate-50 hover:bg-slate-100 transition-colors"
               >
                 {isLogin ? 'Register a New Clinic' : 'Sign in to Existing Clinic'}
               </button>
