@@ -1,6 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useDentora, NavTab } from '../../context/DentoraContext';
+import { DentoraLogo } from '../common/DentoraLogo';
 import {
   LayoutDashboard,
   Users,
@@ -39,17 +40,11 @@ export const Sidebar: React.FC<{
     <aside className="w-[260px] bg-white text-slate-600 flex flex-col shrink-0 h-screen sticky top-0 select-none border-r border-slate-200 print:hidden">
       {/* Logo */}
       <div className="h-16 flex items-center px-6 border-b border-slate-100">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {clinic?.logoUrl ? (
             <img src={clinic.logoUrl} alt="Clinic Logo" className="w-8 h-8 object-contain rounded-lg" />
           ) : (
-            <div className="w-8 h-8 rounded-lg bg-[#2E8081] flex items-center justify-center text-white">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2C8 2 8 6 8 8C8 10 9.5 11.5 9.5 13.5C9.5 17 12 20 12 20C12 20 14.5 17 14.5 13.5C14.5 11.5 16 10 16 8C16 6 16 2 12 2Z" />
-                <path d="M12 20C12 20 9 22 9 22" />
-                <path d="M12 20C12 20 15 22 15 22" />
-              </svg>
-            </div>
+            <DentoraLogo className="w-8 h-8" />
           )}
           <span className="font-extrabold text-[18px] text-[#2E8081] tracking-tight truncate max-w-[170px]" title={clinic?.name || 'DentaClinic'}>
             {clinic?.name || 'DentaClinic'}

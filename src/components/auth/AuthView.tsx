@@ -2,19 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDentora } from '../../context/DentoraContext';
 import { Loader2 } from 'lucide-react';
-
-const DentoraLogo = () => (
-  <svg width="48" height="48" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
-    <path d="M10 8H22C28.6274 8 34 13.3726 34 20C34 26.6274 28.6274 32 22 32H10V8Z" fill="url(#paint0_linear)" />
-    <path d="M16 14H22C25.3137 14 28 16.6863 28 20C28 23.3137 25.3137 26 22 26H16V14Z" fill="white" />
-    <defs>
-      <linearGradient id="paint0_linear" x1="10" y1="8" x2="34" y2="32" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#0F766E" />
-        <stop offset="1" stopColor="#2DD4BF" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
+import { DentoraLogo } from '../common/DentoraLogo';
 
 const AnimatedBackground = () => (
   <div className="absolute inset-0 z-0 overflow-hidden bg-[#fafafa]">
@@ -201,6 +189,8 @@ export const AuthView: React.FC = () => {
                 onClick={() => {
                   setIsLogin(!isLogin);
                   setError('');
+                  setEmail('');
+                  setPassword('');
                 }}
                 className="font-bold text-teal-600 hover:text-teal-700 hover:underline focus:outline-none transition-colors"
               >

@@ -6,6 +6,7 @@ import {
   Bell, FileText, Sliders, MonitorSmartphone, Trash2, Plus, X, CreditCard, MessageSquare, CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DentoraLogo } from '../common/DentoraLogo';
 
 type SettingsTab = 'clinic' | 'users' | 'billing' | 'whatsapp' | 'system';
 
@@ -312,8 +313,8 @@ export const PracticeSettingsView: React.FC = () => {
                       {clinicLogoUrl ? (
                         <img src={clinicLogoUrl} alt="Clinic Logo" className="w-16 h-16 object-contain border border-slate-200 rounded-xl bg-white shadow-sm" />
                       ) : (
-                        <div className="w-16 h-16 border-2 border-slate-200 border-dashed rounded-xl flex items-center justify-center bg-white text-slate-400">
-                          <Building2 className="w-6 h-6 opacity-40" />
+                        <div className="w-16 h-16 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center bg-slate-50">
+                          <DentoraLogo className="w-10 h-10 opacity-50 grayscale" />
                         </div>
                       )}
                       <div>
