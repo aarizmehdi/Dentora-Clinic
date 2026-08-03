@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { useDentora, NavTab } from '../../context/DentoraContext';
 import {
   LayoutDashboard,
@@ -139,19 +140,19 @@ export const Sidebar: React.FC<{
         </div>
       </nav>
 
-      <div className="p-4 border-t border-slate-100 mt-auto">
+      <div className="px-4 pb-6 mt-auto">
         <button
           onClick={() => setIsLogoutModalOpen(true)}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-rose-50 text-slate-500 hover:text-rose-600 transition-all font-semibold"
         >
           <LogOut className="w-[18px] h-[18px]" />
-          <span>Log Out</span>
+          <span className="text-[13px]">Log Out</span>
         </button>
       </div>
 
       {/* Logout Confirmation Modal */}
-      {isLogoutModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+      {isLogoutModalOpen && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-sm w-full p-6 animate-in fade-in zoom-in duration-200">
             <div className="w-12 h-12 rounded-full bg-rose-100 flex items-center justify-center mb-4 mx-auto">
               <LogOut className="w-6 h-6 text-rose-600" />
@@ -175,7 +176,8 @@ export const Sidebar: React.FC<{
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </aside>
   );
