@@ -79,8 +79,6 @@ export const AuthView: React.FC = () => {
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [clinicName, setClinicName] = useState('');
-  const [adminName, setAdminName] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -94,7 +92,7 @@ export const AuthView: React.FC = () => {
       if (isLogin) {
         await login(email, password);
       } else {
-        await registerClinic(email, password, clinicName, adminName);
+        await registerClinic(email, password, 'My Dental Practice', 'Admin');
       }
     } catch (err: any) {
       setError(err.message || 'Authentication failed');
@@ -139,41 +137,6 @@ export const AuthView: React.FC = () => {
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
           
           <form className="space-y-4 relative z-10" onSubmit={handleSubmit}>
-            <AnimatePresence mode="popLayout">
-              {!isLogin && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }} 
-                  animate={{ opacity: 1, height: 'auto' }} 
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-4 overflow-hidden"
-                >
-                  <div>
-                    <label className="block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wide">Clinic Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={clinicName}
-                      onChange={(e) => setClinicName(e.target.value)}
-                      className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-slate-200/80 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-[14px] font-medium transition-all placeholder:text-slate-400 placeholder:font-normal"
-                      placeholder="Acme Dental"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wide">Admin Full Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={adminName}
-                      onChange={(e) => setAdminName(e.target.value)}
-                      className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-slate-200/80 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-[14px] font-medium transition-all placeholder:text-slate-400 placeholder:font-normal"
-                      placeholder="Dr. Jane Smith"
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             <div>
               <label className="block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wide">Email Address</label>
               <input
