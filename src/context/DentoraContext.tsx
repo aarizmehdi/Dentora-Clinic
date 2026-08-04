@@ -8,7 +8,7 @@ import {
 import { auth, db } from '../lib/firebase';
 import { 
   onAuthStateChanged, signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, signOut 
+  createUserWithEmailAndPassword, signOut, sendPasswordResetEmail
 } from 'firebase/auth';
 import { 
   collection, doc, setDoc, updateDoc, onSnapshot, 
@@ -123,6 +123,7 @@ interface DentoraContextType {
   login: (e: string, p: string) => Promise<void>;
   registerClinic: (e: string, p: string, cn: string, an: string) => Promise<void>;
   logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 
   // Visit Workflow
   activeVisitAppointmentId: string | null;
@@ -393,6 +394,10 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
     await signInWithEmailAndPassword(auth, e, p);
   };
   
+  const resetPassword = async (email: string) => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
   const registerClinic = async (e: string, p: string, cn: string, an: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, e, p);
     const uid = userCredential.user.uid;
@@ -756,6 +761,7 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
         login,
         registerClinic,
         logout,
+        resetPassword,
         // Visit Workflow
         activeVisitAppointmentId,
         setActiveVisitAppointmentId,

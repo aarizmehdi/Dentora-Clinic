@@ -62,8 +62,10 @@ const AnimatedBackground = () => (
 );
 
 export const AuthView: React.FC = () => {
-  const { login, registerClinic } = useDentora();
+  const { login, registerClinic, resetPassword } = useDentora();
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -75,9 +77,13 @@ export const AuthView: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setResetSent(false);
     
     try {
-      if (isLogin) {
+      if (isForgotPassword) {
+        await resetPassword(email);
+        setResetSent(true);
+      } else if (isLogin) {
         await login(email, password);
       } else {
         await registerClinic(email, password, 'My Dental Practice', 'Admin');
@@ -107,10 +113,12 @@ export const AuthView: React.FC = () => {
             <DentoraLogo />
           </div>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-            {isLogin ? 'Log in to Dentora' : 'Create workspace'}
+            {isForgotPassword ? 'Reset Password' : (isLogin ? 'Log in to Dentora' : 'Create workspace')}
           </h2>
           <p className="mt-3 text-[15px] text-slate-500 font-medium max-w-[280px]">
-            {isLogin ? 'Enter your details below to access your clinic.' : 'Set up your clinic and get started in seconds.'}
+            {isForgotPassword 
+              ? 'Enter your email address and we will send you a link to reset your password.' 
+              : (isLogin ? 'Enter your details below to access your clinic.' : 'Set up your clinic and get started in seconds.')}
           </p>
         </motion.div>
 
@@ -137,17 +145,34 @@ export const AuthView: React.FC = () => {
               />
             </div>
 
-            <div>
-              <label className="block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wide">Password</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-slate-200/80 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-[14px] font-medium transition-all placeholder:text-slate-400 placeholder:font-normal"
-                placeholder="••••••••"
-              />
-            </div>
+            {!isForgotPassword && (
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-[13px] font-bold text-slate-700 uppercase tracking-wide">Password</label>
+                  {isLogin && (
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setIsForgotPassword(true);
+                        setError('');
+                        setResetSent(false);
+                      }}
+                      className="text-[13px] font-bold text-teal-600 hover:text-teal-700 focus:outline-none transition-colors"
+                    >
+                      Forgot?
+                    </button>
+                  )}
+                </div>
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-slate-200/80 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-[14px] font-medium transition-all placeholder:text-slate-400 placeholder:font-normal"
+                  placeholder="••••••••"
+                />
+              </div>
+            )}
 
             <AnimatePresence>
               {error && (
@@ -158,6 +183,16 @@ export const AuthView: React.FC = () => {
                   className="mt-2 p-3.5 bg-red-50/80 backdrop-blur-sm border border-red-100 text-red-600 text-[13px] font-medium rounded-xl"
                 >
                   {error}
+                </motion.div>
+              )}
+              {resetSent && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -5 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: -5 }}
+                  className="mt-2 p-3.5 bg-teal-50/80 backdrop-blur-sm border border-teal-100 text-teal-700 text-[13px] font-medium rounded-xl"
+                >
+                  Password reset link has been sent to your email!
                 </motion.div>
               )}
             </AnimatePresence>
@@ -171,11 +206,11 @@ export const AuthView: React.FC = () => {
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Authenticating...
+                    {isForgotPassword ? 'Sending...' : 'Authenticating...'}
                   </span>
                 ) : (
                   <>
-                    {isLogin ? 'Sign In' : 'Create Workspace'}
+                    {isForgotPassword ? 'Send Reset Link' : (isLogin ? 'Sign In' : 'Create Workspace')}
                   </>
                 )}
               </button>
@@ -184,18 +219,33 @@ export const AuthView: React.FC = () => {
 
           <div className="mt-8 pt-6 border-t border-slate-200/50 text-center relative z-10">
             <p className="text-[13px] text-slate-500 font-medium">
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
-              <button
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setError('');
-                  setEmail('');
-                  setPassword('');
-                }}
-                className="font-bold text-teal-600 hover:text-teal-700 hover:underline focus:outline-none transition-colors"
-              >
-                {isLogin ? 'Sign up' : 'Log in'}
-              </button>
+              {isForgotPassword ? (
+                <button
+                  onClick={() => {
+                    setIsForgotPassword(false);
+                    setError('');
+                    setResetSent(false);
+                  }}
+                  className="font-bold text-slate-900 hover:underline focus:outline-none transition-colors"
+                >
+                  Back to log in
+                </button>
+              ) : (
+                <>
+                  {isLogin ? "Don't have an account? " : "Already have an account? "}
+                  <button
+                    onClick={() => {
+                      setIsLogin(!isLogin);
+                      setError('');
+                      setEmail('');
+                      setPassword('');
+                    }}
+                    className="font-bold text-teal-600 hover:text-teal-700 hover:underline focus:outline-none transition-colors"
+                  >
+                    {isLogin ? 'Sign up' : 'Log in'}
+                  </button>
+                </>
+              )}
             </p>
           </div>
         </motion.div>
