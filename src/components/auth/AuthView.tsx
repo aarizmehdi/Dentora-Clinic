@@ -166,7 +166,7 @@ export const AuthView: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center py-3.5 px-4 rounded-xl text-[14px] font-bold text-white bg-slate-900 hover:bg-slate-800 shadow-lg shadow-slate-900/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-70 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="w-full flex items-center justify-center py-3.5 px-4 rounded-xl text-[14px] font-bold text-white bg-slate-900 hover:bg-teal-600 shadow-lg shadow-slate-900/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-600 disabled:opacity-70 disabled:cursor-not-allowed transition-colors duration-300"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
