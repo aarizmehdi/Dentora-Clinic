@@ -188,6 +188,15 @@ export const generateClinicalRecord = async (
   }
 };
 
+const getCurrencySymbol = (clinic: Clinic | null): string => {
+  const country = clinic?.country || 'Pakistan';
+  if (country === 'Pakistan') return 'Rs. ';
+  if (country === 'UK') return '£';
+  if (country === 'India') return 'Rs. ';
+  if (country === 'USA') return '$';
+  return clinic?.currency || 'Rs. ';
+};
+
 export const generateInvoicePDF = async (
   invoice: Invoice, 
   patient: Patient, 
@@ -233,7 +242,7 @@ export const generateInvoicePDF = async (
     currentY += 5;
   }
 
-  const curr = clinic?.currency || '$';
+  const curr = getCurrencySymbol(clinic);
 
   // 2. Invoice Meta
   doc.setFontSize(20);
