@@ -153,24 +153,23 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
     setIsLocallyFinalized(true);
     setFinalizeStatus('success');
 
-    const isAutoMode = clinic?.whatsappConfig?.invoiceDeliveryMode === 'auto' || !clinic?.whatsappConfig?.invoiceDeliveryMode;
-    const shouldAutoSend = clinic?.whatsappConfig?.enabled && isAutoMode && patient;
+    const shouldAutoSend = Boolean(patient && patient.phone);
 
-    if (shouldAutoSend) {
+    if (shouldAutoSend && patient) {
       setWhatsappStatus('loading');
       setShowSuccessOverlay(true);
       try {
         const base64Data = await generateInvoicePDF(newInvoice, patient, clinic, true);
         if (base64Data) {
-          let msg = clinic.whatsappConfig!.invoiceTemplate || 'Hello *{PatientName}*, attached is your invoice for your visit to {ClinicName}.';
+          let msg = clinic?.whatsappConfig?.invoiceTemplate || 'Hello *{PatientName}*, attached is your invoice for your visit to {ClinicName}.';
           msg = msg.replace('{PatientName}', patient.firstName);
-          msg = msg.replace('{ClinicName}', clinic.name);
+          msg = msg.replace('{ClinicName}', clinic?.name || 'our practice');
           msg = msg.replace('{Date}', new Date(newInvoice.date).toLocaleDateString());
           
-          const phone = formatPhoneForWhatsApp(patient.phone, clinic.countryCode || '1');
+          const phone = formatPhoneForWhatsApp(patient.phone, clinic?.countryCode || '92');
           const success = await sendWhatsAppDocument(
-            clinic.whatsappConfig!.instanceId,
-            clinic.whatsappConfig!.token,
+            clinic?.whatsappConfig?.instanceId,
+            clinic?.whatsappConfig?.token,
             phone,
             `Invoice_${patient.lastName}_INV-${newInvoice.id.substring(0, 8)}.pdf`,
             base64Data,
@@ -187,18 +186,18 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
             }, 1500);
           } else {
             setWhatsappStatus('idle');
-            showToast('WhatsApp Error', 'Failed to send invoice automatically. Check your WhatsApp config.', 'error');
+            showToast('WhatsApp Error', 'Failed to send invoice automatically. Check UltraMsg config.', 'warning');
             setTimeout(() => onFinalize(newInvoice), 1000);
           }
         } else {
           setWhatsappStatus('idle');
-          showToast('PDF Error', 'Failed to generate PDF for WhatsApp.', 'error');
+          showToast('PDF Error', 'Failed to generate PDF for WhatsApp.', 'danger');
           setTimeout(() => onFinalize(newInvoice), 1000);
         }
       } catch (e) {
         console.error('Auto WhatsApp send failed:', e);
         setWhatsappStatus('idle');
-        showToast('System Error', 'An error occurred while sending WhatsApp message.', 'error');
+        showToast('System Error', 'An error occurred while sending WhatsApp message.', 'danger');
         setTimeout(() => onFinalize(newInvoice), 1000);
       }
     } else {
@@ -244,20 +243,20 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
   };
 
   const handleSendWhatsApp = async () => {
-    if (!localInvoice || !patient || !clinic?.whatsappConfig?.enabled) return;
+    if (!localInvoice || !patient) return;
     setWhatsappStatus('loading');
     try {
       const base64Data = await generateInvoicePDF(localInvoice, patient, clinic, true);
       if (base64Data) {
-        let msg = clinic.whatsappConfig.invoiceTemplate || 'Hello *{PatientName}*, attached is your invoice for your visit to {ClinicName}.';
+        let msg = clinic?.whatsappConfig?.invoiceTemplate || 'Hello *{PatientName}*, attached is your invoice for your visit to {ClinicName}.';
         msg = msg.replace('{PatientName}', patient.firstName);
-        msg = msg.replace('{ClinicName}', clinic.name);
+        msg = msg.replace('{ClinicName}', clinic?.name || 'our practice');
         msg = msg.replace('{Date}', new Date(localInvoice.date).toLocaleDateString());
         
-        const phone = formatPhoneForWhatsApp(patient.phone, clinic.countryCode || '1');
+        const phone = formatPhoneForWhatsApp(patient.phone, clinic?.countryCode || '92');
         const success = await sendWhatsAppDocument(
-          clinic.whatsappConfig.instanceId,
-          clinic.whatsappConfig.token,
+          clinic?.whatsappConfig?.instanceId,
+          clinic?.whatsappConfig?.token,
           phone,
           `Invoice_${patient.lastName}_INV-${localInvoice.id.substring(0, 8)}.pdf`,
           base64Data,
@@ -272,16 +271,16 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
           setTimeout(() => setWhatsappStatus('idle'), 3000);
         } else {
           setWhatsappStatus('idle');
-          showToast('WhatsApp Error', 'Failed to send invoice. Check your WhatsApp config.', 'error');
+          showToast('WhatsApp Error', 'Failed to send invoice. Check UltraMsg config.', 'danger');
         }
       } else {
         setWhatsappStatus('idle');
-        showToast('PDF Error', 'Failed to generate PDF for WhatsApp.', 'error');
+        showToast('PDF Error', 'Failed to generate PDF for WhatsApp.', 'danger');
       }
     } catch (e) {
       console.error('WhatsApp send failed:', e);
       setWhatsappStatus('idle');
-      showToast('System Error', 'An error occurred while sending WhatsApp message.', 'error');
+      showToast('System Error', 'An error occurred while sending WhatsApp message.', 'danger');
     }
   };
 
