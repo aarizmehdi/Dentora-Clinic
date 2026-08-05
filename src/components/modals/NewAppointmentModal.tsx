@@ -12,6 +12,7 @@ export const NewAppointmentModal: React.FC<{
     patients,
     providers,
     filteredOperatories,
+    operatories,
     currentLocation,
     addAppointment,
     selectedDate,
@@ -35,11 +36,13 @@ export const NewAppointmentModal: React.FC<{
   const [isTimeDropdownOpen, setTimeDropdownOpen] = useState(false);
   const [isDurationDropdownOpen, setDurationDropdownOpen] = useState(false);
 
+  const availableOperatories = filteredOperatories.length > 0 ? filteredOperatories : operatories;
+
   useEffect(() => {
     if (isOpen) {
       setPatientId('');
-      setProviderId(prefillData?.providerId || '');
-      setOperatoryId(prefillData?.operatoryId || '');
+      setProviderId(prefillData?.providerId || (providers.length > 0 ? providers[0].id : ''));
+      setOperatoryId(prefillData?.operatoryId || (availableOperatories.length > 0 ? availableOperatories[0].id : ''));
       setBookingDate(selectedDate);
       setStartTime(prefillData?.time || '');
       setDurationMin(45);
@@ -51,7 +54,7 @@ export const NewAppointmentModal: React.FC<{
       setTimeDropdownOpen(false);
       setDurationDropdownOpen(false);
     }
-  }, [isOpen, selectedDate, prefillData]);
+  }, [isOpen, selectedDate, prefillData, availableOperatories, providers]);
 
   if (!isOpen) return null;
 
@@ -309,7 +312,7 @@ export const NewAppointmentModal: React.FC<{
                 required
               >
                 <option value="" disabled>Select Room...</option>
-                {filteredOperatories.map(op => (
+                {availableOperatories.map(op => (
                   <option key={op.id} value={op.id}>{op.name}</option>
                 ))}
               </select>

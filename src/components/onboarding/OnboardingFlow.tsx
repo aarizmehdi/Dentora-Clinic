@@ -10,7 +10,8 @@ import { DentoraLogo } from '../common/DentoraLogo';
 export const OnboardingFlow: React.FC = () => {
   const { 
     clinic, updateClinic, locations, updateLocation, 
-    providers, updateProvider, currentUser, updateUser, addOperatory 
+    providers, updateProvider, currentUser, updateUser, 
+    operatories, updateOperatory, addOperatory 
   } = useDentora();
 
   const [step, setStep] = useState(1);
@@ -103,7 +104,22 @@ export const OnboardingFlow: React.FC = () => {
         });
       }
 
-      // 4. Add Second Room if selected
+      // 4. Update or Add Primary Room 1
+      if (operatories.length > 0) {
+        await updateOperatory(operatories[0].id, {
+          name: room1Name || 'Operatory 1',
+          locationId: mainLocationId,
+        });
+      } else {
+        await addOperatory({
+          name: room1Name || 'Operatory 1',
+          locationId: mainLocationId,
+          equipmentType: 'Standard',
+          isHygiene: false,
+        });
+      }
+
+      // 5. Add Second Room if selected
       if (addSecondRoom && room2Name) {
         await addOperatory({
           name: room2Name,

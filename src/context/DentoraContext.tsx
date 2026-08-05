@@ -56,6 +56,7 @@ interface DentoraContextType {
   operatories: Operatory[];
   filteredOperatories: Operatory[];
   addOperatory: (op: Omit<Operatory, 'id' | 'clinicId'>) => void;
+  updateOperatory: (id: string, updates: Partial<Operatory>) => Promise<void>;
   removeOperatory: (id: string) => void;
   
   // Navigation
@@ -490,7 +491,8 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }
 
   const currentLocation = locations.find(l => l.id === currentLocationId) || (locations.length > 0 ? locations[0] : null);
-  const filteredOperatories = operatories.filter(op => op.locationId === currentLocationId);
+  const targetLocationId = currentLocation?.id || currentLocationId;
+  const filteredOperatories = operatories.filter(op => op.locationId === targetLocationId || !op.locationId);
   const selectedPatient = patients.find(p => p.id === selectedPatientId) || null;
 
   const showToast = (title: string, message: string, type: ToastMessage['type'] = 'success') => {
@@ -542,6 +544,10 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const newOp: Operatory = { ...op, id: ref.id, clinicId: currentClinicId };
     await setDoc(ref, newOp);
     showToast('Operatory Added', `${newOp.name} created successfully.`);
+  };
+
+  const updateOperatory = async (id: string, updates: Partial<Operatory>) => {
+    await updateDoc(doc(db, 'operatories', id), updates);
   };
 
   const removeOperatory = async (id: string) => {
@@ -764,6 +770,7 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
         operatories,
         filteredOperatories,
         addOperatory,
+        updateOperatory,
         removeOperatory,
         activeTab,
         setActiveTab,
