@@ -47,27 +47,24 @@ export const AppointmentActions: React.FC<AppointmentActionsProps> = ({
       return;
     }
     
-    let message = clinic?.whatsappConfig?.appointmentReminderTemplate || `Hello *{PatientName}*,\n\nThis is a reminder for your upcoming dental appointment on *{Date}* at *{Time}* with {ClinicName}.\n\nPlease let us know if you need to reschedule.`;
+    let message = clinic?.whatsappConfig?.appointmentReminderTemplate || `Hello *{PatientName}*,\n\nThis is a friendly reminder for your upcoming dental appointment on *{Date}* at *{Time}* with {ClinicName}.\n\nPlease reply to confirm or reschedule!`;
     message = message.replace('{PatientName}', patient.firstName);
     message = message.replace('{ClinicName}', clinic?.name || 'our clinic');
     message = message.replace('{Date}', appointment.date);
     message = message.replace('{Time}', appointment.startTime);
     
-    if (clinic?.whatsappConfig?.enabled) {
-      const phone = formatPhoneForWhatsApp(patient.phone, clinic.countryCode || '1');
-      const success = await sendWhatsAppMessage(
-        clinic.whatsappConfig.instanceId,
-        clinic.whatsappConfig.token,
-        phone,
-        message
-      );
-      if (success) {
-        showToast('Reminder Sent', `WhatsApp reminder sent to ${patient.firstName}.`, 'success');
-      } else {
-        showToast('Send Failed', 'Failed to send WhatsApp reminder. Check your settings.', 'warning');
-      }
+    const phone = formatPhoneForWhatsApp(patient.phone, clinic?.countryCode || '92');
+    const success = await sendWhatsAppMessage(
+      clinic?.whatsappConfig?.instanceId,
+      clinic?.whatsappConfig?.token,
+      phone,
+      message
+    );
+
+    if (success) {
+      showToast('Reminder Sent', `WhatsApp reminder sent to ${patient.firstName}.`, 'success');
     } else {
-      window.open(`https://wa.me/${patient.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
+      showToast('Send Failed', 'Failed to send WhatsApp message. Check your UltraMsg credentials.', 'danger');
     }
     
     setShowMenu(false);

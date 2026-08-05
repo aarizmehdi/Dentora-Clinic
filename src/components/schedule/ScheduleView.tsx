@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { AppointmentStatus, Appointment, Provider, Operatory } from '../../types/dental';
 import { AppointmentActions } from '../common/AppointmentActions';
+import { sendWhatsAppMessage, formatPhoneForWhatsApp } from '../../lib/ultramsg';
 
 export const ScheduleView: React.FC<{
   onOpenNewAppointmentModal: (prefill?: {time?: string, operatoryId?: string, providerId?: string}) => void;
@@ -151,13 +152,21 @@ export const ScheduleView: React.FC<{
   const selectedProvider = selectedApt ? providers.find(pr => pr.id === selectedApt.providerId) : null;
   const selectedOperatory = selectedApt ? filteredOperatories.find(o => o.id === selectedApt.operatoryId) : null;
 
-  const handleSendWhatsApp = () => {
+  const handleSendWhatsApp = async () => {
     if (!selectedPatient) return;
-    const phone = selectedPatient.phone ? selectedPatient.phone.replace(/[^0-9]/g, '') : '';
-    const message = `Hello ${selectedPatient.firstName}, this is a friendly reminder from ${currentLocation?.name || 'our practice'} regarding your appointment scheduled for ${selectedApt?.date} at ${selectedApt?.startTime} (${selectedApt?.procedureSummary}). Please reply to confirm or reschedule!`;
-    const url = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}` : `https://wa.me/?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-    showToast('WhatsApp Draft Opened', `Prepared reminder for ${selectedPatient.firstName}.`, 'info');
+    if (!selectedPatient.phone) {
+      showToast('No Phone Number', 'Patient does not have a registered phone number.', 'warning');
+      return;
+    }
+    const message = `Hello *${selectedPatient.firstName}*, this is a friendly reminder from *${currentLocation?.name || clinic?.name || 'our practice'}* regarding your appointment scheduled for *${selectedApt?.date}* at *${selectedApt?.startTime ? formatTimeDisplay(selectedApt.startTime) : ''}* (${selectedApt?.procedureSummary || 'General Visit'}). Please reply to confirm or reschedule!`;
+    const phone = formatPhoneForWhatsApp(selectedPatient.phone, clinic?.countryCode || '92');
+    
+    const success = await sendWhatsAppMessage(clinic?.whatsappConfig?.instanceId, clinic?.whatsappConfig?.token, phone, message);
+    if (success) {
+      showToast('WhatsApp Sent', `Reminder sent to ${selectedPatient.firstName}.`, 'success');
+    } else {
+      showToast('WhatsApp Failed', 'Could not send WhatsApp message. Check UltraMsg credentials.', 'danger');
+    }
   };
 
   return (

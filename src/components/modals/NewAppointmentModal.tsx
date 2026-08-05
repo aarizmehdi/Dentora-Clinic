@@ -179,7 +179,7 @@ export const NewAppointmentModal: React.FC<{
       copayEstimate: 0,
     });
 
-    if (clinic?.whatsappConfig?.enabled && selectedPatientObj?.phone) {
+    if (selectedPatientObj?.phone) {
       const formatTime = (time24: string) => {
         const [h, m] = time24.split(':').map(Number);
         const ampm = h >= 12 ? 'PM' : 'AM';
@@ -187,16 +187,16 @@ export const NewAppointmentModal: React.FC<{
         return `${h12.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
       };
       
-      let msg = clinic.whatsappConfig.appointmentBookedTemplate || 'Hello *{PatientName}*, your appointment is booked for *{Date}* at *{Time}* with {ClinicName}.';
+      let msg = clinic?.whatsappConfig?.appointmentBookedTemplate || 'Hello *{PatientName}*, your appointment is booked for *{Date}* at *{Time}* with {ClinicName}.';
       msg = msg.replace('{PatientName}', selectedPatientObj.firstName);
-      msg = msg.replace('{ClinicName}', clinic.name);
+      msg = msg.replace('{ClinicName}', clinic?.name || 'our clinic');
       msg = msg.replace('{Date}', bookingDate);
       msg = msg.replace('{Time}', formatTime(startTime));
       
-      const phone = formatPhoneForWhatsApp(selectedPatientObj.phone, clinic.countryCode || '1');
-      sendWhatsAppMessage(clinic.whatsappConfig.instanceId, clinic.whatsappConfig.token, phone, msg).then(success => {
+      const phone = formatPhoneForWhatsApp(selectedPatientObj.phone, clinic?.countryCode || '92');
+      sendWhatsAppMessage(clinic?.whatsappConfig?.instanceId, clinic?.whatsappConfig?.token, phone, msg).then(success => {
         if (success) {
-          showToast('WhatsApp confirmation sent!');
+          showToast('WhatsApp Sent', `Booking confirmation sent to ${selectedPatientObj.firstName}.`, 'success');
         }
       });
     }

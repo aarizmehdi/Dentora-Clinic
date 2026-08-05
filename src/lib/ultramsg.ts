@@ -10,21 +10,36 @@ export const formatPhoneForWhatsApp = (phone: string, countryCode: string = '92'
   return cleaned;
 };
 
-// Read UltraMsg credentials from environment variables (hardcoded for MVP)
-const getUltraMsgCredentials = (instanceIdOverride?: string, tokenOverride?: string) => {
-  const instanceId = instanceIdOverride || import.meta.env.VITE_ULTRAMSG_INSTANCE_ID || '';
-  const token = tokenOverride || import.meta.env.VITE_ULTRAMSG_TOKEN || '';
+// Read UltraMsg credentials from environment variables or passed overrides
+export const getUltraMsgCredentials = (instanceIdOverride?: string, tokenOverride?: string) => {
+  const instanceId = (instanceIdOverride && instanceIdOverride.trim().length > 0)
+    ? instanceIdOverride
+    : (import.meta.env.VITE_ULTRAMSG_INSTANCE_ID || '');
+
+  const token = (tokenOverride && tokenOverride.trim().length > 0)
+    ? tokenOverride
+    : (import.meta.env.VITE_ULTRAMSG_TOKEN || '');
+
   return { instanceId, token };
 };
 
+export const isWhatsAppAvailable = (clinic?: any) => {
+  if (clinic?.whatsappConfig?.enabled === false) return false;
+  const creds = getUltraMsgCredentials(clinic?.whatsappConfig?.instanceId, clinic?.whatsappConfig?.token);
+  return Boolean(creds.instanceId && creds.token);
+};
+
 export const sendWhatsAppMessage = async (
-  instanceId: string,
-  token: string,
-  to: string,
-  body: string
+  instanceId?: string,
+  token?: string,
+  to?: string,
+  body?: string
 ) => {
   const creds = getUltraMsgCredentials(instanceId, token);
-  if (!creds.instanceId || !creds.token || !to || !body) return false;
+  if (!creds.instanceId || !creds.token || !to || !body) {
+    console.warn('UltraMsg credentials or recipient missing:', { instanceId: creds.instanceId, to, hasBody: !!body });
+    return false;
+  }
 
   try {
     const response = await fetch(`https://api.ultramsg.com/${creds.instanceId}/messages/chat`, {
@@ -44,24 +59,27 @@ export const sendWhatsAppMessage = async (
     }
 
     const data = await response.json();
-    console.log('WhatsApp message sent successfully', data);
+    console.log('WhatsApp message sent successfully via UltraMsg', data);
     return true;
   } catch (error) {
-    console.error('Failed to send WhatsApp message', error);
+    console.error('Failed to send WhatsApp message via UltraMsg', error);
     return false;
   }
 };
 
 export const sendWhatsAppDocument = async (
-  instanceId: string,
-  token: string,
-  to: string,
-  filename: string,
-  documentBase64: string,
+  instanceId?: string,
+  token?: string,
+  to?: string,
+  filename?: string,
+  documentBase64?: string,
   caption: string = ''
 ) => {
   const creds = getUltraMsgCredentials(instanceId, token);
-  if (!creds.instanceId || !creds.token || !to || !documentBase64) return false;
+  if (!creds.instanceId || !creds.token || !to || !documentBase64) {
+    console.warn('UltraMsg document credentials or document missing:', { instanceId: creds.instanceId, to });
+    return false;
+  }
 
   try {
     const response = await fetch(`https://api.ultramsg.com/${creds.instanceId}/messages/document`, {
@@ -72,7 +90,7 @@ export const sendWhatsAppDocument = async (
       body: JSON.stringify({
         token: creds.token,
         to,
-        filename,
+        filename: filename || 'document.pdf',
         document: documentBase64.startsWith('data:') ? documentBase64 : `data:application/pdf;base64,${documentBase64}`,
         caption,
       }),
@@ -83,10 +101,10 @@ export const sendWhatsAppDocument = async (
     }
 
     const data = await response.json();
-    console.log('WhatsApp document sent successfully', data);
+    console.log('WhatsApp document sent successfully via UltraMsg', data);
     return true;
   } catch (error) {
-    console.error('Failed to send WhatsApp document', error);
+    console.error('Failed to send WhatsApp document via UltraMsg', error);
     return false;
   }
 };

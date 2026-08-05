@@ -83,8 +83,8 @@ export const PatientDetailView: React.FC = () => {
   };
 
   const handleSendReminder = async () => {
-    if (!clinic?.whatsappConfig?.enabled) {
-      showToast('WhatsApp Disabled', 'Please enable WhatsApp integrations in Practice Settings.', 'warning');
+    if (!selectedPatient.phone) {
+      showToast('No Phone Number', 'Patient does not have a registered phone number.', 'warning');
       return;
     }
     
@@ -93,23 +93,23 @@ export const PatientDetailView: React.FC = () => {
       .filter(a => a.patientId === selectedPatient.id && new Date(`${a.date}T${a.startTime}`) > new Date())
       .sort((a, b) => new Date(`${a.date}T${a.startTime}`).getTime() - new Date(`${b.date}T${b.startTime}`).getTime())[0];
 
-    let message = clinic.whatsappConfig.appointmentReminderTemplate || 'Hello *{PatientName}*, this is a friendly reminder for your appointment on *{Date}* at *{Time}* with {ClinicName}.';
+    let message = clinic?.whatsappConfig?.appointmentReminderTemplate || 'Hello *{PatientName}*, this is a friendly reminder for your appointment on *{Date}* at *{Time}* with {ClinicName}.';
     message = message.replace('{PatientName}', selectedPatient.firstName);
-    message = message.replace('{ClinicName}', clinic.name);
+    message = message.replace('{ClinicName}', clinic?.name || 'our practice');
     
     if (nextApt) {
       message = message.replace('{Date}', new Date(nextApt.date).toLocaleDateString());
       message = message.replace('{Time}', formatTime(nextApt.startTime));
     } else {
-      message = `Hello *${selectedPatient.firstName}*, this is a message from ${clinic.name}. Please contact us to schedule your next visit!`;
+      message = `Hello *${selectedPatient.firstName}*, this is a message from ${clinic?.name || 'our practice'}. Please contact us to schedule your next visit!`;
     }
 
-    const phone = formatPhoneForWhatsApp(selectedPatient.phone, clinic.countryCode || '1');
-    const success = await sendWhatsAppMessage(clinic.whatsappConfig.instanceId, clinic.whatsappConfig.token, phone, message);
+    const phone = formatPhoneForWhatsApp(selectedPatient.phone, clinic?.countryCode || '92');
+    const success = await sendWhatsAppMessage(clinic?.whatsappConfig?.instanceId, clinic?.whatsappConfig?.token, phone, message);
     if (success) {
-      showToast('WhatsApp Sent', 'Reminder sent successfully.', 'success');
+      showToast('WhatsApp Sent', `Reminder sent to ${selectedPatient.firstName}.`, 'success');
     } else {
-      showToast('WhatsApp Failed', 'Failed to send message. Check credentials.', 'danger');
+      showToast('WhatsApp Failed', 'Failed to send WhatsApp message. Check UltraMsg credentials.', 'danger');
     }
   };
   const hasUpcomingApt = appointments.some(a => a.patientId === selectedPatient.id && new Date(`${a.date}T${a.startTime}`) > new Date() && ['scheduled', 'confirmed'].includes(a.status));

@@ -16,7 +16,7 @@ import {
 import { ToothSurface, ToothConditionType, ToothStatus } from '../../types/dental';
 import { generateSOAPNote } from '../../lib/deepseek';
 import { generateClinicalRecord } from '../../lib/pdfGenerator';
-import { sendWhatsAppDocument, formatPhoneForWhatsApp } from '../../lib/ultramsg';
+import { sendWhatsAppDocument, formatPhoneForWhatsApp, isWhatsAppAvailable } from '../../lib/ultramsg';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- TREATMENT LIBRARY ---
@@ -800,11 +800,14 @@ export const OdontogramView: React.FC = () => {
                     </>
                   )}
                 </button>
-                {clinic?.whatsappConfig?.enabled && (
+                {isWhatsAppAvailable(clinic) && (
                   <button
                     disabled={whatsappStatus !== 'idle'}
                     onClick={async () => {
-                      if (!selectedPatient) return;
+                      if (!selectedPatient || !selectedPatient.phone) {
+                        showToast('No Phone Number', 'Patient has no phone number registered.', 'warning');
+                        return;
+                      }
                       setWhatsappStatus('loading');
                       const dateStr = new Date().toISOString().split('T')[0];
                       const groupedVisits = new Map<string, { notes: any[], procedures: any[] }>();
@@ -825,17 +828,17 @@ export const OdontogramView: React.FC = () => {
                       
                       const base64Data = await generateClinicalRecord(selectedPatient, clinic, groupedVisits, providers, dateStr, currentUser, true);
                       
-                      if (base64Data && clinic.whatsappConfig) {
-                        let msg = clinic.whatsappConfig.clinicalRecordTemplate || 'Hello *{PatientName}*, attached is your clinical record from your recent visit to {ClinicName}.';
+                      if (base64Data) {
+                        let msg = clinic?.whatsappConfig?.clinicalRecordTemplate || 'Hello *{PatientName}*, attached is your clinical record from your recent visit to {ClinicName}.';
                         msg = msg.replace('{PatientName}', selectedPatient.firstName);
-                        msg = msg.replace('{ClinicName}', clinic.name);
+                        msg = msg.replace('{ClinicName}', clinic?.name || 'our practice');
                         msg = msg.replace('{Date}', dateStr);
                         msg = msg.replace('{Time}', '');
                         
-                        const phone = formatPhoneForWhatsApp(selectedPatient.phone, clinic.countryCode || '1');
+                        const phone = formatPhoneForWhatsApp(selectedPatient.phone, clinic?.countryCode || '92');
                         const success = await sendWhatsAppDocument(
-                          clinic.whatsappConfig.instanceId,
-                          clinic.whatsappConfig.token,
+                          clinic?.whatsappConfig?.instanceId,
+                          clinic?.whatsappConfig?.token,
                           phone,
                           `${selectedPatient.lastName}_${selectedPatient.firstName}_ClinicalRecord.pdf`,
                           base64Data,
@@ -844,8 +847,10 @@ export const OdontogramView: React.FC = () => {
   
                         if (success) {
                           setWhatsappStatus('success');
+                          showToast('WhatsApp Sent', `Clinical record sent to ${selectedPatient.firstName}.`, 'success');
                         } else {
                           setWhatsappStatus('idle');
+                          showToast('WhatsApp Failed', 'Could not send clinical record. Check UltraMsg credentials.', 'danger');
                         }
                       } else {
                          setWhatsappStatus('idle');

@@ -7,7 +7,7 @@ import { printPDFBase64 } from '../../lib/printUtils';
 import { useState } from 'react';
 
 export const PatientBillingView: React.FC = () => {
-  const { invoices, selectedPatient, clinic, currencySymbol, saveInvoice } = useDentora();
+  const { invoices, selectedPatient, clinic, currencySymbol, saveInvoice, showToast } = useDentora();
   const [activeActionId, setActiveActionId] = useState<string | null>(null);
   const [actionType, setActionType] = useState<'whatsapp' | 'print' | 'download' | null>(null);
 
@@ -47,21 +47,24 @@ export const PatientBillingView: React.FC = () => {
   };
 
   const handleSendWhatsApp = async (inv: any) => {
-    if (!clinic?.whatsappConfig?.enabled) return;
+    if (!selectedPatient?.phone) {
+      showToast('No Phone Number', 'Patient does not have a registered phone number.', 'warning');
+      return;
+    }
     setActiveActionId(inv.id);
     setActionType('whatsapp');
     try {
       const base64Data = await generateInvoicePDF(inv, selectedPatient, clinic, true);
       if (base64Data) {
-        let msg = clinic.whatsappConfig.invoiceTemplate || 'Hello *{PatientName}*, attached is your invoice for your visit to {ClinicName}.';
+        let msg = clinic?.whatsappConfig?.invoiceTemplate || 'Hello *{PatientName}*, attached is your invoice for your visit to {ClinicName}.';
         msg = msg.replace('{PatientName}', selectedPatient.firstName);
-        msg = msg.replace('{ClinicName}', clinic.name);
+        msg = msg.replace('{ClinicName}', clinic?.name || 'our practice');
         msg = msg.replace('{Date}', new Date(inv.date).toLocaleDateString());
         
-        const phone = formatPhoneForWhatsApp(selectedPatient.phone, clinic.countryCode || '1');
+        const phone = formatPhoneForWhatsApp(selectedPatient.phone, clinic?.countryCode || '92');
         const success = await sendWhatsAppDocument(
-          clinic.whatsappConfig.instanceId,
-          clinic.whatsappConfig.token,
+          clinic?.whatsappConfig?.instanceId,
+          clinic?.whatsappConfig?.token,
           phone,
           `Invoice_${selectedPatient.lastName}_INV-${inv.id.substring(0, 8)}.pdf`,
           base64Data,
@@ -69,6 +72,9 @@ export const PatientBillingView: React.FC = () => {
         );
         if (success) {
           saveInvoice({ ...inv, deliveryStatus: 'sent' });
+          showToast('WhatsApp Sent', `Invoice sent to ${selectedPatient.firstName}.`, 'success');
+        } else {
+          showToast('WhatsApp Failed', 'Could not send invoice via UltraMsg. Check credentials.', 'danger');
         }
       }
     } catch (e) {
@@ -120,6 +126,14 @@ export const PatientBillingView: React.FC = () => {
               )}
             </div>
             <div className="col-span-3 flex items-center justify-end gap-2">
+              <button
+                onClick={() => handleSendWhatsApp(inv)}
+                disabled={activeActionId === inv.id}
+                title="Send via WhatsApp"
+                className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition disabled:opacity-50"
+              >
+                <MessageSquare className="w-4 h-4" />
+              </button>
               <button
                 onClick={() => handlePrint(inv)}
                 disabled={activeActionId === inv.id}
