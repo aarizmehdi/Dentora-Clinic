@@ -147,22 +147,7 @@ export const AuthView: React.FC = () => {
 
             {!isForgotPassword && (
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="block text-[13px] font-bold text-slate-700 uppercase tracking-wide">Password</label>
-                  {isLogin && (
-                    <button 
-                      type="button"
-                      onClick={() => {
-                        setIsForgotPassword(true);
-                        setError('');
-                        setResetSent(false);
-                      }}
-                      className="text-[13px] font-bold text-teal-600 hover:text-teal-700 focus:outline-none transition-colors"
-                    >
-                      Forgot?
-                    </button>
-                  )}
-                </div>
+                <label className="block text-[13px] font-bold text-slate-700 mb-2 uppercase tracking-wide">Password</label>
                 <input
                   type="password"
                   required
@@ -171,6 +156,21 @@ export const AuthView: React.FC = () => {
                   className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-slate-200/80 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-[14px] font-medium transition-all placeholder:text-slate-400 placeholder:font-normal"
                   placeholder="••••••••"
                 />
+                {isLogin && (
+                  <div className="flex justify-end mt-2">
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setIsForgotPassword(true);
+                        setError('');
+                        setResetSent(false);
+                      }}
+                      className="text-[12px] font-semibold text-slate-400 hover:text-teal-600 focus:outline-none transition-colors"
+                    >
+                      Forgot your password?
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 

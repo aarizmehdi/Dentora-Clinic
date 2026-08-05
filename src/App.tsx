@@ -16,6 +16,7 @@ import { InvoiceManagementView } from './components/billing/InvoiceManagementVie
 import { NewAppointmentModal } from './components/modals/NewAppointmentModal';
 import { NewPatientModal } from './components/modals/NewPatientModal';
 import { AuthView } from './components/auth/AuthView';
+import { MobileBlocker } from './components/common/MobileBlocker';
 import { OnboardingFlow } from './components/onboarding/OnboardingFlow';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -147,6 +148,7 @@ const AppContent: React.FC = () => {
 export default function App() {
   return (
     <DentoraProvider>
+      <MobileBlocker />
       <AppContent />
     </DentoraProvider>
   );

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { AppSkeleton } from '../components/layout/AppSkeleton';
 import { 
   Clinic, Location, Provider, Operatory, Patient, 
   Appointment, ToothCondition, PerioExam,
@@ -47,9 +48,11 @@ interface DentoraContextType {
   currentLocation: Location | null;
   setCurrentLocationId: (id: string) => void;
   currentUser: User | null;
+  updateUser: (updates: Partial<User>) => Promise<void>;
   currentRole: UserRole | null;
   setCurrentRole: (role: UserRole) => void;
   providers: Provider[];
+  updateProvider: (id: string, updates: Partial<Provider>) => Promise<void>;
   operatories: Operatory[];
   filteredOperatories: Operatory[];
   addOperatory: (op: Omit<Operatory, 'id' | 'clinicId'>) => void;
@@ -481,7 +484,7 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   if (!isAuthReady) {
-    return <div className="h-screen flex items-center justify-center">Loading Dentora...</div>;
+    return <AppSkeleton />;
   }
 
   const currentLocation = locations.find(l => l.id === currentLocationId) || (locations.length > 0 ? locations[0] : null);
@@ -496,6 +499,16 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const removeToast = (id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
+  const updateUser = async (updates: Partial<User>) => {
+    if (!currentUser) return;
+    await updateDoc(doc(db, 'users', currentUser.id), updates);
+    setCurrentUser(prev => prev ? { ...prev, ...updates } : null);
+  };
+
+  const updateProvider = async (id: string, updates: Partial<Provider>) => {
+    await updateDoc(doc(db, 'providers', id), updates);
   };
 
   const addProvider = async (newProv: Omit<Provider, 'id' | 'clinicId'>) => {
@@ -708,6 +721,7 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         isAuthReady,
         currentUser,
+        updateUser,
         currentClinicId,
         clinic,
         updateClinic,
@@ -718,6 +732,7 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
         currentRole,
         setCurrentRole,
         providers,
+        updateProvider,
         operatories,
         filteredOperatories,
         addOperatory,

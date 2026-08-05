@@ -1,4 +1,4 @@
-export const formatPhoneForWhatsApp = (phone: string, countryCode: string = '1') => {
+export const formatPhoneForWhatsApp = (phone: string, countryCode: string = '92') => {
   let cleaned = phone.replace(/\D/g, '');
   if (cleaned.startsWith('0')) {
     cleaned = cleaned.substring(1);
@@ -10,22 +10,30 @@ export const formatPhoneForWhatsApp = (phone: string, countryCode: string = '1')
   return cleaned;
 };
 
+// Read UltraMsg credentials from environment variables (hardcoded for MVP)
+const getUltraMsgCredentials = (instanceIdOverride?: string, tokenOverride?: string) => {
+  const instanceId = instanceIdOverride || import.meta.env.VITE_ULTRAMSG_INSTANCE_ID || '';
+  const token = tokenOverride || import.meta.env.VITE_ULTRAMSG_TOKEN || '';
+  return { instanceId, token };
+};
+
 export const sendWhatsAppMessage = async (
   instanceId: string,
   token: string,
   to: string,
   body: string
 ) => {
-  if (!instanceId || !token || !to || !body) return false;
+  const creds = getUltraMsgCredentials(instanceId, token);
+  if (!creds.instanceId || !creds.token || !to || !body) return false;
 
   try {
-    const response = await fetch(`https://api.ultramsg.com/${instanceId}/messages/chat`, {
+    const response = await fetch(`https://api.ultramsg.com/${creds.instanceId}/messages/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        token,
+        token: creds.token,
         to,
         body,
       }),
@@ -52,16 +60,17 @@ export const sendWhatsAppDocument = async (
   documentBase64: string,
   caption: string = ''
 ) => {
-  if (!instanceId || !token || !to || !documentBase64) return false;
+  const creds = getUltraMsgCredentials(instanceId, token);
+  if (!creds.instanceId || !creds.token || !to || !documentBase64) return false;
 
   try {
-    const response = await fetch(`https://api.ultramsg.com/${instanceId}/messages/document`, {
+    const response = await fetch(`https://api.ultramsg.com/${creds.instanceId}/messages/document`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        token,
+        token: creds.token,
         to,
         filename,
         document: documentBase64.startsWith('data:') ? documentBase64 : `data:application/pdf;base64,${documentBase64}`,

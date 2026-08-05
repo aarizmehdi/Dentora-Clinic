@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Stethoscope } from 'lucide-react';
+import { DentoraLogo } from '../common/DentoraLogo';
 
 export const AppSkeleton: React.FC = () => {
   return (
@@ -77,7 +77,7 @@ export const AppSkeleton: React.FC = () => {
             transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
             className="h-64 bg-white border border-slate-200 rounded-2xl shadow-sm w-full mt-6 flex items-center justify-center"
           >
-            <Stethoscope className="w-12 h-12 text-slate-200 animate-pulse" />
+            <DentoraLogo className="w-12 h-12 animate-pulse opacity-30" />
           </motion.div>
         </div>
       </div>

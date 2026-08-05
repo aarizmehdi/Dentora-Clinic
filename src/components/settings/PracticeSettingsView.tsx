@@ -8,7 +8,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { DentoraLogo } from '../common/DentoraLogo';
 
-type SettingsTab = 'clinic' | 'users' | 'billing' | 'whatsapp' | 'system';
+type SettingsTab = 'clinic' | 'users' | 'billing' | 'system';
 
 export const PracticeSettingsView: React.FC = () => {
   const { 
@@ -228,7 +228,6 @@ export const PracticeSettingsView: React.FC = () => {
     { id: 'clinic', label: 'Clinic & Locations', icon: Building2 },
     { id: 'users', label: 'Staff Management', icon: Users },
     { id: 'billing', label: 'Billing & Services', icon: CreditCard },
-    { id: 'whatsapp', label: 'WhatsApp Integrations', icon: MessageSquare },
     { id: 'system', label: 'System Preferences', icon: Sliders },
   ];
 
@@ -585,8 +584,8 @@ export const PracticeSettingsView: React.FC = () => {
 
 
 
-          {/* WHATSAPP INTEGRATION */}
-          {activeTab === 'whatsapp' && (
+          {/* WHATSAPP INTEGRATION — Hidden for MVP (managed via env vars) */}
+          {false && (
             <motion.div key="whatsapp" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="max-w-3xl space-y-8">
               <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
@@ -594,7 +593,7 @@ export const PracticeSettingsView: React.FC = () => {
                     <div className="p-2 rounded-xl bg-teal-50 text-teal-600">
                       <MessageSquare className="w-5 h-5" />
                     </div>
-                    WhatsApp Integrations (UltraMsg)
+                    WhatsApp Integrations
                   </h3>
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-bold text-slate-500">Enable</span>
@@ -627,7 +626,7 @@ export const PracticeSettingsView: React.FC = () => {
                         value={waToken} 
                         onChange={(e) => setWaToken(e.target.value)} 
                         className="w-full p-3 text-sm font-semibold rounded-xl bg-white border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-teal-500 transition-all placeholder:font-normal" 
-                        placeholder="Your UltraMsg Token"
+                        placeholder="Your API Token"
                       />
                     </div>
                   </div>
