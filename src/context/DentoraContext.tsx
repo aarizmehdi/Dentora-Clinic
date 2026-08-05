@@ -134,6 +134,8 @@ interface DentoraContextType {
   startVisit: (appointmentId: string) => void;
   completeVisit: () => void;
 
+  clearAllDatabaseData: () => Promise<void>;
+
   currencySymbol: string;
 }
 
@@ -715,6 +717,32 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
     showToast('Invoice Saved', isUpdate ? 'Invoice updated successfully.' : 'New invoice generated successfully.', 'success');
   };
 
+  const clearAllDatabaseData = async () => {
+    if (!currentClinicId) return;
+    const collectionsToClear = [
+      'users', 'patients', 'appointments', 'providers',
+      'operatories', 'toothConditions', 'soapNotes', 'perioExams',
+      'clinicServices', 'invoices'
+    ];
+
+    for (const collName of collectionsToClear) {
+      try {
+        const snap = await getDocs(query(collection(db, collName), where('clinicId', '==', currentClinicId)));
+        for (const d of snap.docs) {
+          await deleteDoc(doc(db, collName, d.id));
+        }
+      } catch (err) {
+        console.error(`Error deleting collection ${collName}:`, err);
+      }
+    }
+
+    try {
+      await deleteDoc(doc(db, 'clinics', currentClinicId));
+    } catch (e) {}
+
+    await logout();
+  };
+
 
   return (
     <DentoraContext.Provider
@@ -784,6 +812,8 @@ export const DentoraProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setPendingInvoiceDate,
         startVisit,
         completeVisit,
+
+        clearAllDatabaseData,
 
         // Billing
         clinicServices,

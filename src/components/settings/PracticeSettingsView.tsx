@@ -14,7 +14,8 @@ export const PracticeSettingsView: React.FC = () => {
   const { 
     clinic, updateClinic, locations, operatories, addOperatory, removeOperatory, providers, currentRole, 
     timeZone, setTimeZone, timeFormat, setTimeFormat, addProvider, addLocation, updateLocation,
-    clinicServices, addClinicService, updateClinicService, deleteClinicService, currencySymbol, showToast
+    clinicServices, addClinicService, updateClinicService, deleteClinicService, currencySymbol, showToast,
+    clearAllDatabaseData
   } = useDentora();
   
   const [activeTab, setActiveTab] = useState<SettingsTab>('clinic');
@@ -760,6 +761,29 @@ export const PracticeSettingsView: React.FC = () => {
                     </button>
                   </div>
                 </form>
+              </div>
+
+              {/* Danger Zone: Wipe Practice Database Data */}
+              <div className="bg-rose-50/70 border border-rose-200 rounded-2xl p-6 space-y-4">
+                <div>
+                  <h3 className="text-sm font-black text-rose-900 flex items-center gap-2">
+                    <Trash2 className="w-4 h-4 text-rose-600" /> Reset & Clear Database Data
+                  </h3>
+                  <p className="text-xs text-rose-700 mt-1">
+                    Delete all patients, appointments, providers, operatories, invoices, and clinic data from Firestore.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (window.confirm("Are you sure you want to PERMANENTLY delete all clinic data, patients, appointments, and records from Firestore? This action cannot be undone.")) {
+                      await clearAllDatabaseData();
+                    }
+                  }}
+                  className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition shadow-sm"
+                >
+                  Wipe Practice & Database Data
+                </button>
               </div>
             </motion.div>
           )}
