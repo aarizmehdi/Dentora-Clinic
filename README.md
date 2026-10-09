@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://img.icons8.com/color/96/000000/tooth.png" alt="Dentora Logo" />
+  <img src="./public/dentora-logo.png" alt="Dentora Logo" width="96" height="96" />
   <h1>Dentora - Modern Clinic Management System</h1>
   <p>A comprehensive, lightning-fast SaaS operating system designed for modern dental practices.</p>
 </div>
